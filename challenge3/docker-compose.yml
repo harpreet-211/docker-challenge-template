@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  db:
+    build: ./docker/db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  node-service:
+    build: ./docker/api
+    environment:
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+    expose:
+      - "3000:3000"
+    
+    
+
+    depends_on:
+      - db
+
+  nginx:
+    build: ./docker/nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - node-service
